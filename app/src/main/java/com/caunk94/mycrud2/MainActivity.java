@@ -8,13 +8,16 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
+import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
     private DBManager dm;
@@ -31,7 +34,11 @@ public class MainActivity extends AppCompatActivity {
         lv.setOnItemLongClickListener(itemLongClick);
 
         //style
-
+        Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        my_toolbar.setTitle(R.string.my_title_main);
+        my_toolbar.setSubtitle(R.string.my_subtitle_main);
+        my_toolbar.setLogo(R.mipmap.icandro_bat);
+        setSupportActionBar(my_toolbar);
 
     }
 
@@ -141,7 +148,24 @@ public class MainActivity extends AppCompatActivity {
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-
+        getMenuInflater().inflate(R.menu.menu_main, menu);//untuk menampilkan toolbar, kalau tidak ada kode ini toolbar tidak akan terlihat
         return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+
+        switch (item.getItemId()){
+            case R.id.item_setting:
+                //startActivity(new Intent(this, SettingsActivity.class));
+                Toast.makeText(this, R.string.item_setting, Toast.LENGTH_SHORT).show();
+                break;
+
+            case R.id.item_profile:
+                //startActivity(new Intent(this, ProfileActivity.class));
+                 Toast.makeText(this, R.string.item_profile, Toast.LENGTH_SHORT).show();
+                break;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

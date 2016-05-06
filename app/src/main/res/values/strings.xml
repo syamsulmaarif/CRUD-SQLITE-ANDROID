@@ -2,4 +2,8 @@
     <string name="app_name">MyCrud2</string>
     <string name="title">Data Procurement</string>
     <string name="search">Search</string>
+    <string name="item_setting">Settings</string>
+    <string name="item_profile">Profile</string>
+    <string name="my_title_main">Crud2</string>
+    <string name="my_subtitle_main">This is Subtitle !</string>
 </resources>
