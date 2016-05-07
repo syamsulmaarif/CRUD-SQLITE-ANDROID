@@ -41,12 +41,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         initial();
-        displayData();
+        //displayData();
         context = this;
 
         ListView lv= (ListView)findViewById(R.id.listView);
         lv.setOnItemLongClickListener(itemLongClick);
-        lv.setAdapter(costumAdapter);
+        //lv.setAdapter(costumAdapter);
 
         //style
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -94,10 +94,12 @@ public class MainActivity extends AppCompatActivity {
                 R.id.textTanggalPymn,
                 R.id.textSuplier,
                 R.id.textTotalB};
-        Cursor c = dm.getListSiswaAsCursor();
+        Cursor c= dm.getListSiswaAsCursor();
         adapter = new SimpleCursorAdapter(this, R.layout.item_data, c, from, to);
         ListView listview = (ListView)findViewById(R.id.listView);
         listview.setAdapter(adapter);
+
+
 
     }
 
