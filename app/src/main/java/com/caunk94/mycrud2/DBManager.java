@@ -3,7 +3,9 @@ package com.caunk94.mycrud2;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 /**
  * Created by caunk94 on 4/25/2016.
@@ -11,6 +13,7 @@ import android.database.sqlite.SQLiteDatabase;
 public class DBManager {
     private DBHelper dbHelper =null;
     private SQLiteDatabase db=null;
+    Cursor cursor;
     private String []columns = {
             DBHelper.COLUMN_ID,
             DBHelper.COLUMN_IDPAYMENT,
@@ -115,5 +118,60 @@ public class DBManager {
         } catch (Exception e) {
 
         }
+    }
+
+    public Cursor fetchCountriesByIdPayment(String inputText) throws SQLException {
+        Log.w(dbHelper.TAG, inputText);
+        Cursor mCursor = null;
+        if (inputText == null  ||  inputText.length () == 0)  {
+            mCursor = db.query(DBHelper.TABLE_NAME, columns,
+                    null, null, null, null, null);
+
+        }
+        else {
+            mCursor = db.query(true, DBHelper.TABLE_NAME,columns,
+                    DBHelper.COLUMN_IDPAYMENT + " like '%" + inputText + "%'",
+                    null, null, null, null, null);
+        }
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+
+    }
+
+    public Cursor  getStudentListByKeyword(String search) {
+        //Open connection to read only
+        SQLiteDatabase db = dbHelper.getReadableDatabase();
+
+
+
+
+
+        if (cursor == null || search.length() == 0) {
+            cursor =  db.query(dbHelper.TABLE_NAME, columns,
+                    null, null, null, null, null);
+
+        }else{
+            String selectQuery =  "SELECT  rowid as " +
+                    DBHelper.COLUMN_ID + "," +
+                    DBHelper.COLUMN_IDPAYMENT + "," +
+                    DBHelper.COLUMN_TANGGALPAYMENT + "," +
+                    DBHelper.COLUMN_SUPPLIER + "," +
+                    DBHelper.COLUMN_TOTALBAYAR +
+                    " FROM " + DBHelper.TABLE_NAME +
+                    " WHERE " +  DBHelper.COLUMN_IDPAYMENT + "  LIKE  '%" +search + "%' ";
+            cursor = db.rawQuery(selectQuery, null);
+            // looping through all rows and adding to list
+        }
+
+        if (cursor != null) {
+            cursor.moveToFirst();
+            //cursor.close();
+            //return null;
+        }
+        return cursor;
+
+
     }
 }

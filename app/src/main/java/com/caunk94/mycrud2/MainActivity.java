@@ -1,27 +1,41 @@
 package com.caunk94.mycrud2;
 
+import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.app.Dialog;
+import android.app.SearchManager;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
+import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.Button;
+import android.widget.CursorAdapter;
+import android.widget.FilterQueryProvider;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 import android.widget.Toast;
+import java.util.List;
 
 public class MainActivity extends AppCompatActivity {
     private DBManager dm;
     private Context context;
+    Cursor cursor;
+    CostumAdapter costumAdapter;
+    private SimpleCursorAdapter adapter;
+    //private CustomAdapter customAdapter;
+    private final static String TAG= MainActivity.class.getName().toString();
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -32,6 +46,7 @@ public class MainActivity extends AppCompatActivity {
 
         ListView lv= (ListView)findViewById(R.id.listView);
         lv.setOnItemLongClickListener(itemLongClick);
+        lv.setAdapter(costumAdapter);
 
         //style
         Toolbar my_toolbar = (Toolbar) findViewById(R.id.my_toolbar);
@@ -80,10 +95,13 @@ public class MainActivity extends AppCompatActivity {
                 R.id.textSuplier,
                 R.id.textTotalB};
         Cursor c = dm.getListSiswaAsCursor();
-        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, R.layout.item_data, c, from, to);
+        adapter = new SimpleCursorAdapter(this, R.layout.item_data, c, from, to);
         ListView listview = (ListView)findViewById(R.id.listView);
         listview.setAdapter(adapter);
+
     }
+
+
 
     private AdapterView.OnItemLongClickListener itemLongClick = new AdapterView.OnItemLongClickListener() {
 
@@ -146,10 +164,54 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB)
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);//untuk menampilkan toolbar, kalau tidak ada kode ini toolbar tidak akan terlihat
-        return super.onCreateOptionsMenu(menu);
+
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            SearchManager manager = (SearchManager) getSystemService(Context.SEARCH_SERVICE);
+            SearchView search = (SearchView) menu.findItem(R.id.item_search).getActionView();
+            search.setSearchableInfo(manager.getSearchableInfo(getComponentName()));
+
+            search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
+
+                @Override
+                public boolean onQueryTextSubmit(String s) {
+                    Log.d(TAG, "onQueryTextSubmit ");
+                    cursor=dm.getStudentListByKeyword(s);
+                    if (cursor==null){
+                        Toast.makeText(MainActivity.this,"No records found!",Toast.LENGTH_LONG).show();
+                    }else{
+                        Toast.makeText(MainActivity.this, cursor.getCount() + " records found!",Toast.LENGTH_LONG).show();
+                    }
+
+
+                    adapter.setFilterQueryProvider(new FilterQueryProvider() {
+                        public Cursor runQuery(CharSequence constraint) {
+                            return dm.getStudentListByKeyword(constraint.toString());
+                        }
+                    });
+                    adapter.swapCursor(cursor);
+
+                    return false;
+                }
+
+                @Override
+                public boolean onQueryTextChange(String s) {
+                    Log.d(TAG, "onQueryTextChange ");
+                    cursor=dm.getStudentListByKeyword(s);
+                    if (cursor!=null){
+                        adapter.swapCursor(cursor);
+                    }
+                    return false;
+                }
+
+            });
+
+        }
+
+       return true;
     }
 
     @Override

@@ -1,16 +1,21 @@
 package com.caunk94.mycrud2;
 
 import android.content.Context;
+import android.database.Cursor;
+import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 /**
  * Created by caunk94 on 4/25/2016.
  */
 public class DBHelper extends SQLiteOpenHelper {
+    private SQLiteDatabase db;
     public static final String DB_NAME = "Procurement_db";
     public static final String TABLE_NAME = "Payment";
     public static final int DB_VERSION = 1;
+    public static final String TAG = "DBHelper";
     public static final String COLUMN_ID = "_id";
     public static final String COLUMN_IDPAYMENT = "id_payment";
     public static final String COLUMN_TANGGALPAYMENT = "tanggalpayment";
@@ -34,4 +39,6 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("DROP TABLE"+TABLE_NAME);
         onCreate(db);
     }
+
+
 }
